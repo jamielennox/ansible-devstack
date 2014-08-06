@@ -1,0 +1,63 @@
+# Example command line: ansible-playbook -i "fedora@10.16.18.218," devstack.yml
+
+---
+- hosts: all
+  gather_facts: no
+
+  vars:
+      devstack_dir: ~/devstack
+      dotfiles_dir: ~/dotfiles
+
+  tasks:
+    # - name: install packstack repos
+    #   sudo: yes
+    #   yum: pkg=http://rdo.fedorapeople.org/rdo-release.rpm state=installed
+
+    - name: upgrade all packages
+      sudo: yes
+      yum: name=* state=latest
+
+    - name: Install packages
+      sudo: yes
+      yum: name={{ item }}
+      with_items:
+          - git
+          - vim-enhanced
+          - ruby
+          - ack
+          # - openstack-packstack
+
+    - name: Set up authorized_keys for the deploy user
+      authorized_key: user=fedora
+                      key="{{ item }}"
+      with_file:
+        - public_keys/lappy.pub
+        - public_keys/work.pub
+
+    - name: checkout devstack
+      git: repo=https://github.com/openstack-dev/devstack.git
+           dest={{ devstack_dir }}
+
+    - name: checkout dotfiles
+      git: repo=git@github.com:jamielennox/dotfiles.git
+           dest={{ dotfiles_dir }}
+           recursive=yes
+           accept_hostkey=True
+
+    - name: create dotfile links
+      file: src={{ dotfiles_dir }}/{{ item }}
+            dest=~/.{{ item }}
+            state=link
+      with_items:
+        - gitconfig
+        - gitignore
+        - vim
+        - ackrc
+
+    - name: copy local.conf
+      copy: src=local.conf
+            dest={{ devstack_dir }}/local.conf
+
+    - name: disable selinux
+      sudo: yes
+      selinux: state=disabled
