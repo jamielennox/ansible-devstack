@@ -28,6 +28,7 @@
           - httpie
           - mosh
           - git-review
+          - redhat-rpm-config
           # - openstack-packstack
 
     - name: Set up authorized_keys for the deploy user
