@@ -37,6 +37,8 @@
       with_file:
         - public_keys/lappy.pub
         - public_keys/work.pub
+        - public_keys/ayoung.pub
+        - public_keys/nkinder.pub
 
     - name: checkout devstack
       git: repo=https://github.com/openstack-dev/devstack.git
