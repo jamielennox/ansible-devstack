@@ -2,24 +2,36 @@
 
 ---
 - hosts: all
-  gather_facts: no
+  gather_facts: yes
 
   vars:
       devstack_dir: ~/devstack
       dotfiles_dir: ~/dotfiles
 
   tasks:
-    - name: upgrade all packages
+    - name: upgrade all packages with yum
       sudo: yes
+      when: (ansible_distribution == 'Fedora' and ansible_distribution_major_version|int < 22) or ansible_distribution == "CentOS"
       yum: name=* state=latest
 
-    - name: install packstack repos
+    - name: upgrade all packages with dnf
       sudo: yes
-      yum: pkg=http://rdo.fedorapeople.org/rdo-release.rpm state=installed
+      when: ansible_distribution == "Fedora" and ansible_distribution_major_version|int >= 22
+      dnf: name=* state=latest
 
-    - name: Install packages
+    - name: Add EPEL to CentOS
+      sudo: yes
+      yum: name=epel-release state=latest
+      when: ansible_distribution == "CentOS"
+
+    # - name: install packstack repos
+    #   sudo: yes
+    #   yum: pkg=http://rdo.fedorapeople.org/rdo-release.rpm state=installed
+
+    - name: Install packages with yum
       sudo: yes
       yum: name={{ item }}
+      when: (ansible_distribution == 'Fedora' and ansible_distribution_major_version|int < 22) or ansible_distribution == "CentOS"
       with_items:
           - git
           - vim-enhanced
@@ -29,10 +41,30 @@
           - mosh
           - git-review
           - redhat-rpm-config
+          - rng-tools
           # - openstack-packstack
 
+    - name: Install packages with dnf
+      sudo: yes
+      dnf: name={{ item }}
+      when: ansible_distribution == "Fedora" and ansible_distribution_major_version|int >= 22
+      with_items:
+          - git
+          - vim-enhanced
+          - ruby
+          - ack
+          - httpie
+          - mosh
+          - git-review
+          - redhat-rpm-config
+          - rng-tools
+
+    - name: Start the rngd service
+      sudo: yes
+      service: name=rngd enabled=yes state=started
+
     - name: Set up authorized_keys for the deploy user
-      authorized_key: user=fedora
+      authorized_key: user="{{ ansible_user_id }}"
                       key="{{ item }}"
       with_file:
         - public_keys/lappy.pub

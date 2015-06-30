@@ -24,8 +24,8 @@ if [ -z $1 ]; then
     usage
 fi
 
-local ip=$(echo $1 | cut -d '@' -f 2)
-sed -i -e "s/^$ip.*$//" ~/.ssh/known_hosts
+# ip=$(echo $1 | cut -d '@' -f 2)
+# sed -i -e "s/^$ip.*$//" ~/.ssh/known_hosts
 
 # echo "ansible-playbook -i \"$1,\" devstack.yml"
 ansible-playbook -i "$1," devstack.yml
