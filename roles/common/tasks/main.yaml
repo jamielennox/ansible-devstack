@@ -1,0 +1,92 @@
+# Example command line: ansible-playbook -i "fedora@10.16.18.218," devstack.yml
+
+---
+- name: upgrade all packages with yum
+  sudo: yes
+  when: (ansible_distribution == 'Fedora' and ansible_distribution_major_version|int < 22) or ansible_distribution == "CentOS"
+  yum: name=* state=latest
+
+- name: upgrade all packages with dnf
+  sudo: yes
+  when: ansible_distribution == "Fedora" and ansible_distribution_major_version|int >= 22
+  dnf: name=* state=latest
+
+- name: Add EPEL to CentOS
+  sudo: yes
+  yum: name=epel-release state=latest
+  when: ansible_distribution == "CentOS"
+
+# - name: install packstack repos
+#   sudo: yes
+#   yum: pkg=http://rdo.fedorapeople.org/rdo-release.rpm state=installed
+
+- name: Install packages with yum
+  sudo: yes
+  yum: name={{ item }}
+  when: (ansible_distribution == 'Fedora' and ansible_distribution_major_version|int < 22) or ansible_distribution == "CentOS"
+  with_items:
+      - git
+      - vim-enhanced
+      - ruby
+      - ack
+      - httpie
+      - mosh
+      - git-review
+      - redhat-rpm-config
+      - rng-tools
+      # - openstack-packstack
+
+- name: Install packages with dnf
+  sudo: yes
+  dnf: name={{ item }}
+  when: ansible_distribution == "Fedora" and ansible_distribution_major_version|int >= 22
+  with_items:
+      - git
+      - vim-enhanced
+      - ruby
+      - ack
+      - httpie
+      - mosh
+      - git-review
+      - redhat-rpm-config
+      - rng-tools
+
+- name: Start the rngd service
+  sudo: yes
+  service: name=rngd enabled=yes state=started
+
+- name: Set up authorized_keys for the deploy user
+  authorized_key: user="{{ ansible_user_id }}"
+                  key="{{ item }}"
+  with_file:
+    - public_keys/lappy.pub
+    - public_keys/work.pub
+    - public_keys/ayoung.pub
+    - public_keys/nkinder.pub
+
+- name: checkout dotfiles
+  git: repo=https://github.com/jamielennox/dotfiles.git
+       dest={{ dotfiles_dir }}
+       recursive=yes
+       accept_hostkey=True
+
+- name: create dotfile links
+  file: src={{ dotfiles_dir }}/{{ item }}
+        dest=~/.{{ item }}
+        state=link
+  with_items:
+    - gitconfig
+    - gitignore
+    - vim
+    - ackrc
+
+- name: disable selinux
+  sudo: yes
+  selinux: state=disabled
+
+- name: tty-less sudo
+  sudo: yes
+  lineinfile: dest=/etc/sudoers
+              state=absent
+              regexp='^Defaults(\s+)requiretty(\s*)$'
+              validate='visudo -cf %s'

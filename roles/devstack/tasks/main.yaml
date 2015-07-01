@@ -1,0 +1,8 @@
+---
+- name: checkout devstack
+  git: repo=https://github.com/openstack-dev/devstack.git
+       dest={{ devstack_dir }}
+
+- name: copy local.conf
+  copy: src=local.conf
+        dest={{ devstack_dir }}/local.conf
