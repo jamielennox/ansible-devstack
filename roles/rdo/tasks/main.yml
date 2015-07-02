@@ -1,0 +1,8 @@
+---
+- name: install packstack release repos
+  sudo: yes
+  yum: pkg=http://rdo.fedorapeople.org/rdo-release.rpm state=installed
+
+- name: install packstack
+  sudo: yes
+  yum: pkg=openstack-packstack

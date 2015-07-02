@@ -1,0 +1,8 @@
+---
+- yum: name=bind-dyndb-ldap,ipa-server state=latest
+  sudo: yes
+  when: ansible_distribution == "CentOS"
+
+- name: Install FreeIPA
+  sudo: yes
+  command: ipa-server-install -U -r {{realm}} -p {{password}} -a {{password}} --setup-dns --forwarder {{dnsforwarder}} --hostname {{servername}}

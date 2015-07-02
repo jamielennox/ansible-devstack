@@ -1,0 +1,4 @@
+realm: "{{ domain | upper }}"
+servername: ipa.{{ domain }}
+password: password
+dnsforwarder: 8.8.8.8

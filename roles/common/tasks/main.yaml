@@ -16,10 +16,6 @@
   yum: name=epel-release state=latest
   when: ansible_distribution == "CentOS"
 
-# - name: install packstack repos
-#   sudo: yes
-#   yum: pkg=http://rdo.fedorapeople.org/rdo-release.rpm state=installed
-
 - name: Install packages with yum
   sudo: yes
   yum: name={{ item }}
@@ -90,3 +86,8 @@
               state=absent
               regexp='^Defaults(\s+)requiretty(\s*)$'
               validate='visudo -cf %s'
+
+- name: Set server hostname
+  sudo: yes
+  hostname: name={{hostname}}
+  when: hostname is defined
