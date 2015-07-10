@@ -1,8 +1,19 @@
 ---
-- name: install packstack release repos
+- name: install rdo release repos
   sudo: yes
   yum: pkg=http://rdo.fedorapeople.org/rdo-release.rpm state=installed
 
-- name: install packstack
+- name: install puppet packages
   sudo: yes
-  yum: pkg=openstack-packstack
+  yum: name={{ item }}
+  with_items:
+    - puppet
+    - openstack-puppet-modules
+
+- name: copy puppet modules
+  sudo: yes
+  synchronize: src=modules dest=/rdo recursive=yes set_remote_user=no
+
+- name: Install RDO
+  sudo: yes
+  command: puppet apply --modulepath /rdo/modules:/usr/share/openstack-puppet/modules/ -e "include rdoinstall"
