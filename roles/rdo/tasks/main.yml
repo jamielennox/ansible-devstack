@@ -10,6 +10,10 @@
     - puppet
     - openstack-puppet-modules
 
+- name: copy puppet hiera config
+  sudo: yes
+  copy: src=hiera.yaml dest=/etc/puppet/hiera.yaml
+
 - name: copy puppet modules
   sudo: yes
   synchronize: src=modules dest=/rdo recursive=yes set_remote_user=no
