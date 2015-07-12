@@ -6,8 +6,8 @@ class rdoinstall::amqp {
 
   class { '::rabbitmq':
     ssl              => false,
-    default_user     => 'amqp_user',
-    default_pass     => 'amqp_pass',
+    default_user     => hiera('amqp_user'),
+    default_pass     => hiera('amqp_pass'),
     package_provider => 'yum',
     admin_enable     => false,
     config_variables => {

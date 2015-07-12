@@ -7,29 +7,29 @@ class rdoinstall::glance {
   }
 
   class { '::glance::api':
-    auth_uri            => 'http://localhost:5000/',
-    identity_uri        => 'http://localhost:35357',
+    auth_uri            => "http://$::fqdn:5000/",
+    identity_uri        => "http://$::fqdn:35357",
     keystone_tenant     => 'services',
-    keystone_user       => 'glance',
-    keystone_password   => 'glance',
+    keystone_user       => hiera('glance_user'),
+    keystone_password   => hiera('glance_password'),
     pipeline            => 'keystone',
     database_connection => "mysql://glance:glance@localhost/glance",
   }
 
   class { '::glance::registry':
-    auth_uri            => 'http://localhost:5000/',
-    identity_uri        => 'http://localhost:35357',
+    auth_uri            => "http://$::fqdn:5000/",
+    identity_uri        => "http://$::fqdn:35357",
     keystone_tenant     => 'services',
-    keystone_user       => 'glance',
-    keystone_password   => 'glance',
+    keystone_user       => hiera('glance_user'),
+    keystone_password   => hiera('glance_password'),
     database_connection => "mysql://glance:glance@localhost/glance",
   }
 
   class { '::glance::keystone::auth':
-    password         => 'glance',
-    public_address   => 'localhost',
-    admin_address    => 'localhost',
-    internal_address => 'localhost',
+    password         => hiera('glance_password'),
+    public_address   => $::fqdn,
+    admin_address    => $::fqdn,
+    internal_address => $::fqdn,
   }
 
   class { '::glance::notify::rabbitmq':

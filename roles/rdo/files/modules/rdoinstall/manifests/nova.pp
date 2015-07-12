@@ -16,8 +16,8 @@ class rdoinstall::nova {
     rabbit_host            => 'localhost',
     rabbit_port            => '5672',
     rabbit_use_ssl         => false,
-    rabbit_userid          => 'amqp_user',
-    rabbit_password        => 'amqp_pass',
+    rabbit_userid          => hiera('amqp_user'),
+    rabbit_password        => hiera('amqp_pass'),
     verbose                => true,
     database_connection    => 'mysql://nova:nova@localhost/nova',
   }

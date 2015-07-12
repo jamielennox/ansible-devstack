@@ -1,0 +1,7 @@
+---
+amqp_user: amqp_user
+amqp_pass: amqp_pass
+
+glance_user: glance
+glance_password: glance
+glance_db_password: glance

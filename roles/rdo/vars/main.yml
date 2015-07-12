@@ -1,0 +1,13 @@
+---
+hiera_location: /var/lib/hiera
+
+hierarchy:
+
+  glance:
+    glance_user: "{{ glance_user }}"
+    glance_password: "{{ glance_password }}"
+    glance_db_password: "{{ glance_db_password }}"
+
+  amqp:
+    amqp_user: "{{ amqp_user }}"
+    amqp_pass: "{{ amqp_pass }}"

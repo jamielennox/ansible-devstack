@@ -12,11 +12,24 @@
 
 - name: copy puppet hiera config
   sudo: yes
-  copy: src=hiera.yaml dest=/etc/puppet/hiera.yaml
+  template: src=hiera.j2 dest=/etc/puppet/hiera.yaml
 
 - name: copy puppet modules
   sudo: yes
   synchronize: src=modules dest=/rdo recursive=yes set_remote_user=no
+
+- name: Start certmonger
+  sudo: yes
+  service: name=certmonger enabled=yes state=started
+
+- name: hiera directory
+  sudo: yes
+  file: state=directory path="{{ hiera_location }}"
+
+- name: Setup hiera files
+  sudo: yes
+  copy: content="{{ item.value | to_nice_yaml(indent=2) }}" dest="{{ hiera_location }}/{{ item.key }}.yaml" force=yes
+  with_dict: "{{ hierarchy }}"
 
 - name: Install RDO
   sudo: yes

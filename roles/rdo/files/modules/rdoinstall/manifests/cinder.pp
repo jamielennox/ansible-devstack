@@ -91,8 +91,8 @@ RequiredBy=openstack-cinder-volume.service',
     rabbit_host         => 'localhost',
     rabbit_port         => '5672',
     rabbit_use_ssl      => false,
-    rabbit_userid       => 'amqp_user',
-    rabbit_password     => 'amqp_pass',
+    rabbit_userid       => hiera('amqp_user'),
+    rabbit_password     => hiera('amqp_pass'),
     database_connection => "mysql://cinder:cinder@localhost/cinder",
   }
 
