@@ -8,6 +8,19 @@ hierarchy:
     glance_password: "{{ glance_password }}"
     glance_db_password: "{{ glance_db_password }}"
 
+  cinder:
+    cinder_user: "{{ cinder_user }}"
+    cinder_password: "{{ cinder_password }}"
+    cinder_db_password: "{{ cinder_db_password }}"
+
+  keystone:
+    keystone_db_password: "{{ keystone_db_password }}"
+
+  nova:
+    nova_user: "{{ nova_user }}"
+    nova_password: "{{ nova_password }}"
+    nova_db_password: "{{ nova_db_password }}"
+
   amqp:
     amqp_user: "{{ amqp_user }}"
     amqp_pass: "{{ amqp_pass }}"

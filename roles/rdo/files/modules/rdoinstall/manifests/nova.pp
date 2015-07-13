@@ -1,5 +1,9 @@
 class rdoinstall::nova {
 
+  $nova_user = hiera('nova_user')
+  $nova_password = hiera('nova_password')
+  $nova_db_password = hiera('nova_db_password')
+
   nova_config {
     'DEFAULT/metadata_host':         value => '127.0.0.1';
     'DEFAULT/default_floating_pool': value => 'nova';
@@ -19,14 +23,14 @@ class rdoinstall::nova {
     rabbit_userid          => hiera('amqp_user'),
     rabbit_password        => hiera('amqp_pass'),
     verbose                => true,
-    database_connection    => 'mysql://nova:nova@localhost/nova',
+    database_connection    => "mysql://nova:$nova_db_password@localhost/nova",
   }
 
   class { '::nova::api':
     enabled        => true,
     auth_uri       => 'http://localhost:5000',
     identity_uri   => 'http://localhost:35357',
-    admin_password => 'nova',
+    admin_password => $nova_password,
     enabled_apis   => 'osapi_compute,metadata',
   }
 
@@ -113,12 +117,12 @@ class rdoinstall::nova {
   }
 
   class { '::nova::db::mysql':
-    password      => 'nova',
+    password      => $nova_db_password,
     allowed_hosts => 'localhost',
   }
 
   class { '::nova::keystone::auth':
-    password         => 'nova',
+    password         => $nova_password,
     public_address   => 'localhost',
     admin_address    => 'localhost',
     internal_address => 'localhost',

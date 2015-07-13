@@ -27,11 +27,9 @@ class rdoinstall::horizon {
     max_memory => '10%%',
   }
 
-  $firewall_port = '80'
-
   firewall { "001 horizon ${firewall_port}  incoming":
     proto  => 'tcp',
-    dport  => [$firewall_port],
+    dport  => '80',
     action => 'accept',
   }
 

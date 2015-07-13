@@ -1,8 +1,10 @@
 class rdoinstall::keystone {
 
+  $keystone_db_password = hiera('keystone_db_password')
+
   class { '::keystone':
     admin_token         => 'ADMIN',
-    database_connection => 'mysql://keystone:keystone@localhost/keystone',
+    database_connection => "mysql://keystone:$keystone_db_password@localhost/keystone",
     service_name        => 'httpd',
   }
 
@@ -12,7 +14,7 @@ class rdoinstall::keystone {
 
   class { '::keystone::db::mysql':
     user          => 'keystone',
-    password      => 'keystone',
+    password      => hiera('keystone_db_password'),
     dbname        => 'keystone',
     allowed_hosts => ['localhost'],
   }

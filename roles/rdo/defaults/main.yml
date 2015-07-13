@@ -2,6 +2,16 @@
 amqp_user: amqp_user
 amqp_pass: amqp_pass
 
+cinder_user: cinder
+cinder_password: cinder
+cinder_db_password: cinder
+
 glance_user: glance
 glance_password: glance
 glance_db_password: glance
+
+keystone_db_password: keystone
+
+nova_user: nova
+nova_password: nova
+nova_db_password: nova
