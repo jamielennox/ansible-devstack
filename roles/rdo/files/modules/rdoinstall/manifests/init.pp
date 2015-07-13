@@ -2,7 +2,10 @@ class rdoinstall {
   # https://bugs.launchpad.net/puppet-openstacklib/+bug/1472837
   include ::mysql::server
 
+  $debug = hiera('debug')
+
   include ::rdoinstall::amqp
+
   include ::rdoinstall::cinder
   include ::rdoinstall::glance
   include ::rdoinstall::horizon

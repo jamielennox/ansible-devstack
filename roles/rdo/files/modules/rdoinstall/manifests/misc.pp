@@ -16,4 +16,12 @@ class rdoinstall::misc {
     require => Service['tuned'],
   }
 
+  package { ['python-memcached', 'python-netaddr']:
+    ensure => present,
+  }
+
+  class { '::memcached':
+    max_memory => '10%%',
+  }
+
 }

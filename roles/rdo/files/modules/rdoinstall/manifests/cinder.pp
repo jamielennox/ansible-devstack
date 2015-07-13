@@ -2,6 +2,7 @@ class rdoinstall::cinder {
 
   $cinder_user = hiera('cinder_user')
   $cinder_password = hiera('cinder_password')
+  $cinder_db_user = hiera('cinder_db_user')
   $cinder_db_password = hiera('cinder_db_password')
 
   cinder_config {
@@ -11,7 +12,7 @@ class rdoinstall::cinder {
   class { '::cinder::api':
     keystone_password  => $cinder_password,
     keystone_user      => $cinder_user,
-    keystone_tenant    => 'services',
+    keystone_tenant    => $services_project,
     auth_uri           => 'http://localhost:5000',
     identity_uri       => 'http://localhost:35357',
   }
@@ -25,7 +26,7 @@ class rdoinstall::cinder {
   # Cinder::Type requires keystone credentials
   Cinder::Type {
     os_password    => $cinder_password,
-    os_tenant_name => 'services',
+    os_tenant_name => $services_project,
     os_username    => $cinder_username,
     os_auth_url    => 'http://localhost:5000/v2.0',
   }
@@ -83,21 +84,23 @@ class rdoinstall::cinder {
     rabbit_host         => 'localhost',
     rabbit_port         => '5672',
     rabbit_use_ssl      => false,
-    rabbit_userid       => hiera('amqp_user'),
-    rabbit_password     => hiera('amqp_pass'),
-    database_connection => "mysql://cinder:cinder@localhost/cinder",
+    rabbit_userid       => $::rdoinstall::amqp::amqp_user,
+    rabbit_password     => $::rdoinstall::amqp::amqp_pass,
+    database_connection => "mysql://$cinder_db_user:$cinder_db_password@localhost/cinder",
   }
 
   class { '::cinder::db::mysql':
+    user          => $cinder_db_user,
     password      => $cinder_db_password,
     allowed_hosts => 'localhost',
     charset       => 'utf8',
   }
 
   class { '::cinder::keystone::auth':
+    auth_name        => $cinder_user,
     password         => $cinder_password,
-    public_address   => 'localhost',
-    admin_address    => 'localhost',
+    public_address   => $::fqdn,
+    admin_address    => $::fqdn,
   }
 
 }

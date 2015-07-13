@@ -2,6 +2,7 @@ class rdoinstall::nova {
 
   $nova_user = hiera('nova_user')
   $nova_password = hiera('nova_password')
+  $nova_db_user = hiera('nova_db_user')
   $nova_db_password = hiera('nova_db_password')
 
   nova_config {
@@ -16,14 +17,16 @@ class rdoinstall::nova {
   }
 
   class { '::nova':
-    glance_api_servers     => 'localhost:9292',
+    glance_api_servers     => "$::fqdn:9292",
     rabbit_host            => 'localhost',
     rabbit_port            => '5672',
     rabbit_use_ssl         => false,
-    rabbit_userid          => hiera('amqp_user'),
-    rabbit_password        => hiera('amqp_pass'),
+    rabbit_userid          => $::rdoinstall::amqp::amqp_user,
+    rabbit_password        => $::rdoinstall::amqp::amqp_pass,
     verbose                => true,
-    database_connection    => "mysql://nova:$nova_db_password@localhost/nova",
+    database_connection    => "mysql://$nova_db_user:$nova_db_password@localhost/nova",
+    memcached_servers      => ["localhost:11211"],
+    debug                  => $::rdoinstall::debug,
   }
 
   class { '::nova::api':
@@ -40,7 +43,7 @@ class rdoinstall::nova {
     neutron_enabled => false,
   }
 
-  # Firewall <| |> -> Class['nova::compute::libvirt']
+  Firewall <| |> -> Class['nova::compute::libvirt']
 
   # Ensure Firewall changes happen before libvirt service start
   # preventing a clash with rules being set by libvirt
@@ -117,34 +120,35 @@ class rdoinstall::nova {
   }
 
   class { '::nova::db::mysql':
+    user          => $nova_db_user,
     password      => $nova_db_password,
     allowed_hosts => 'localhost',
   }
 
   class { '::nova::keystone::auth':
+    auth_name        => $nova_user,
     password         => $nova_password,
-    public_address   => 'localhost',
-    admin_address    => 'localhost',
-    internal_address => 'localhost',
+    public_address   => $::fqdn,
+    admin_address    => $::fqdn,
+    internal_address => $::fqdn,
   }
 
-#  $libvirt_debug = hiera('CONFIG_DEBUG_MODE')
-#  if $libvirt_debug {
-#
-#    file_line { '/etc/libvirt/libvirt.conf log_filters':
-#      path   => '/etc/libvirt/libvirtd.conf',
-#      line   => 'log_filters = "1:libvirt 1:qemu 1:conf 1:security 3:event 3:json 3:file 1:util"',
-#      match  => 'log_filters =',
-#      notify => Service['libvirt'],
-#    }
-#
-#    file_line { '/etc/libvirt/libvirt.conf log_outputs':
-#      path   => '/etc/libvirt/libvirtd.conf',
-#      line   => 'log_outputs = "1:file:/var/log/libvirt/libvirtd.log"',
-#      match  => 'log_outputs =',
-#      notify => Service['libvirt'],
-#    }
-#
-#  }
+  if $::rdoinstall::debug {
+
+    file_line { '/etc/libvirt/libvirt.conf log_filters':
+      path   => '/etc/libvirt/libvirtd.conf',
+      line   => 'log_filters = "1:libvirt 1:qemu 1:conf 1:security 3:event 3:json 3:file 1:util"',
+      match  => 'log_filters =',
+      notify => Service['libvirt'],
+    }
+
+    file_line { '/etc/libvirt/libvirt.conf log_outputs':
+      path   => '/etc/libvirt/libvirtd.conf',
+      line   => 'log_outputs = "1:file:/var/log/libvirt/libvirtd.log"',
+      match  => 'log_outputs =',
+      notify => Service['libvirt'],
+    }
+
+  }
 
 }

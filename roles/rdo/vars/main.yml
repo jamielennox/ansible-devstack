@@ -3,22 +3,34 @@ hiera_location: /var/lib/hiera
 
 hierarchy:
 
+  common:
+    debug: "{{ debug }}"
+    admin_user: "{{ admin_user }}"
+    admin_password: "{{ admin_password }}"
+    admin_project_name: "{{ admin_project_name }}"
+    services_project_name: "{{ services_project_name }}"
+
   glance:
     glance_user: "{{ glance_user }}"
     glance_password: "{{ glance_password }}"
+    glance_db_user: "{{ glance_db_password }}"
     glance_db_password: "{{ glance_db_password }}"
 
   cinder:
     cinder_user: "{{ cinder_user }}"
     cinder_password: "{{ cinder_password }}"
+    cinder_db_user: "{{ cinder_db_user }}"
     cinder_db_password: "{{ cinder_db_password }}"
 
   keystone:
+    admin_token: "{{ admin_token }}"
+    keystone_db_user: "{{ keystone_db_user }}"
     keystone_db_password: "{{ keystone_db_password }}"
 
   nova:
     nova_user: "{{ nova_user }}"
     nova_password: "{{ nova_password }}"
+    nova_db_user: "{{ nova_db_user }}"
     nova_db_password: "{{ nova_db_password }}"
 
   amqp:

@@ -1,7 +1,12 @@
 class rdoinstall::glance {
 
+  $glance_user = hiera('glance_user')
+  $glance_password = hiera('glance_password')
+  $glance_db_user = hiera('glance_db_user')
+  $glance_db_password = hiera('glance_db_password')
+
   class { '::glance::db::mysql':
-    password      => 'glance',
+    password      => $glance_db_password,
     host          => 'localhost',
     allowed_hosts => 'localhost',
   }
@@ -9,24 +14,27 @@ class rdoinstall::glance {
   class { '::glance::api':
     auth_uri            => "http://$::fqdn:5000/",
     identity_uri        => "http://$::fqdn:35357",
-    keystone_tenant     => 'services',
-    keystone_user       => hiera('glance_user'),
-    keystone_password   => hiera('glance_password'),
+    keystone_tenant     => $services_project,
+    keystone_user       => $glance_user,
+    keystone_password   => $glance_password,
     pipeline            => 'keystone',
-    database_connection => "mysql://glance:glance@localhost/glance",
+    database_connection => "mysql://$glance_db_user:$glance_db_password@localhost/glance",
+    debug               => $::rdoinstall::debug,
   }
 
   class { '::glance::registry':
     auth_uri            => "http://$::fqdn:5000/",
     identity_uri        => "http://$::fqdn:35357",
-    keystone_tenant     => 'services',
-    keystone_user       => hiera('glance_user'),
-    keystone_password   => hiera('glance_password'),
-    database_connection => "mysql://glance:glance@localhost/glance",
+    keystone_tenant     => $services_project,
+    keystone_user       => $glance_user,
+    keystone_password   => $glance_password,
+    database_connection => "mysql://$glance_db_user:$glance_db_password@localhost/glance",
+    debug               => $::rdoinstall::debug,
   }
 
   class { '::glance::keystone::auth':
-    password         => hiera('glance_password'),
+    auth_name        => $glance_user,
+    password         => $glance_password,
     public_address   => $::fqdn,
     admin_address    => $::fqdn,
     internal_address => $::fqdn,
@@ -36,8 +44,8 @@ class rdoinstall::glance {
     rabbit_host        => 'localhost',
     rabbit_port        => '5672',
     rabbit_use_ssl     => false,
-    rabbit_userid      => 'amqp_user',
-    rabbit_password    => 'amqp_pass',
+    rabbit_userid      => $::rdoinstall::amqp::amqp_user,
+    rabbit_password    => $::rdoinstall::amqp::amqp_pass,
   }
 
   class { '::glance::backend::file':

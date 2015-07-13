@@ -16,6 +16,13 @@ class rdoinstall::nova_network {
     # config_overrides  => $overrides,
   }
 
+  exec { 'libvirtd_reload':
+    path      => ['/usr/sbin/', '/sbin'],
+    command   => 'service libvirtd reload',
+    logoutput => 'on_failure',
+    require   => Class['nova::network'],
+  }
+
   package { 'dnsmasq':
     ensure => present,
   }
