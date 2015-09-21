@@ -1,0 +1,17 @@
+---
+- name: checkout dotfiles
+  git: repo=https://github.com/jamielennox/dotfiles.git
+       dest={{ dotfiles_dir }}
+       recursive=yes
+       accept_hostkey=True
+
+- name: create dotfile links
+  file: src={{ dotfiles_dir }}/{{ item }}
+        dest=~/.{{ item }}
+        state=link
+  with_items:
+    - gitconfig
+    - gitignore
+    - vim
+    - ackrc
+

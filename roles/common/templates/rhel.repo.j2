@@ -1,0 +1,11 @@
+[rhel]
+name = RHEL {{ ansible_distribution_version }} Repo
+baseurl = http://download.devel.redhat.com/released/RHEL-{{ ansible_distribution_major_version }}/{{ ansible_distribution_version }}/Server/$basearch/os/
+gpgcheck = 0
+enabled = 1
+
+[rhel-optional]
+name = RHEL {{ ansible_distribution_version }} Optional Repo
+baseurl = http://download.devel.redhat.com/released/RHEL-{{ ansible_distribution_major_version }}/{{ ansible_distribution_version }}/Server-optional/$basearch/os/
+gpgcheck = 0
+enabled = 1

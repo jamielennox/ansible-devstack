@@ -1,0 +1,9 @@
+---
+- name: upgrade all packages with yum
+  sudo: yes
+  yum: name=* state=latest
+
+- name: Install common packages
+  sudo: yes
+  yum: name={{ item }}
+  with_items: "{{ common_packages }}"

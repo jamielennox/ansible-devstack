@@ -1,0 +1,12 @@
+---
+common_packages:
+  - git
+  - vim-enhanced
+  - ruby
+  - ack
+  - httpie
+  - mosh
+  - git-review
+  - redhat-rpm-config
+  - rng-tools
+  - epel-release
