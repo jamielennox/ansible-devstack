@@ -1,7 +1,0 @@
----
-:backends: yaml
-:yaml:
-  :datadir: {{ hiera_location }}
-:logger: console
-:hierarchy:
-  {{ hierarchy.keys() | to_nice_yaml | indent(2) }}
