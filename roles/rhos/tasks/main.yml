@@ -1,0 +1,8 @@
+---
+- name: copy repo files
+  sudo: yes
+  copy: src={{ item }}
+        dest=/etc/yum.repos.d/
+        owner=root
+  with_fileglob:
+    - "*.repo"
