@@ -20,12 +20,6 @@
 - include: rngd.yml
 - include: dotfiles.yml
 
-- name: Set up authorized_keys for the deploy user
-  authorized_key: user={{ ansible_user_id }}
-                  key="{{ lookup('file', 'item') }}"
-  with_fileglob:
-    - public_keys/*.pub
-
 - name: tty-less sudo
   sudo: yes
   lineinfile: dest=/etc/sudoers
