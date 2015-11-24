@@ -1,0 +1,9 @@
+---
+- name: upgrade all packages with apt
+  sudo: yes
+  apt: upgrade=dist
+
+- name: Install common packages
+  sudo: yes
+  apt: name={{ item }}
+  with_items: "{{ common_packages }}"

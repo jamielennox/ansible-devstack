@@ -3,12 +3,13 @@
   sudo: yes
   copy: src=rngd.service dest=/etc/systemd/system/rngd.service
   register: rngd
+  when: ansible_os_family == 'RedHat'
 
 - name: reload systemd units
   sudo: yes
   command: systemctl daemon-reload
-  when: rngd.changed
+  when: rngd.changed and ansible_os_family == 'RedHat'
 
 - name: Start the rngd service
   sudo: yes
-  service: name=rngd enabled=yes state=started
+  service: name={{ rng_daemon }} enabled=yes state=started

@@ -1,8 +1,9 @@
-# Example command line: ansible-playbook -i "fedora@10.16.18.218," devstack.yml
-
 ---
 - name: set distribution variables
-  include_vars: "{{ ansible_distribution | lower }}.yml"
+  include_vars: "{{ item }}"
+  with_items:
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-family.yml"
 
 - include: fedora.yml
   when: ansible_distribution == 'Fedora'
@@ -13,9 +14,13 @@
 - include: redhat.yml
   when: ansible_distribution == 'RedHat'
 
+- include: ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
+
 - name: disable selinux
   sudo: yes
   selinux: state=disabled
+  when: ansible_os_family == 'RedHat'
 
 - include: rngd.yml
 - include: dotfiles.yml

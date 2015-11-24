@@ -1,0 +1,10 @@
+---
+common_packages:
+  - git
+  - vim-nox
+  - ruby
+  - ack-grep
+  - httpie
+  - mosh
+  - git-review
+  - rng-tools
