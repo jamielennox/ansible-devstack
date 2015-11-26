@@ -1,0 +1,89 @@
+---
+osc: openstack
+
+keystone_dir: /opt/keystone
+keystone_branch: master
+keystone_home: /var/lib/keystone
+keystone_shell: /bin/false
+keystone_user: keystone
+keystone_admin_token: ADMIN
+
+keystone_log_dir: /var/log/keystone
+keystone_wsgi_dir: /var/www/keystone
+
+keystone_mapping_folder: /opt/mappings
+
+keystone_db_user: keystone
+keystone_db_pass: keystone
+keystone_db_name: keystone
+
+## CONFIG FILE VARIABLES
+
+keystone_debug: True
+keystone_notification_format: cadf
+
+keystone_auth_methods: password,token
+
+keystone_cache_enabled: false
+keystone_cache_backend: oslo_cache.memcache_pool
+keystone_cache_memcache_servers: localhost:11211
+keystone_cache_debug: false
+
+keystone_database_connection: mysql://{{ keystone_db_user }}:{{ keystone_db_pass }}@localhost/{{ keystone_db_name }}
+
+keystone_federation_assertion_prefix: ""
+keystone_federation_remote_id_attribute: ""
+keystone_federation_trusted_dashboard: ""
+keystone_federation_federated_domain_name: Federated
+keystone_federation_sso_callback_template: /etc/keystone/sso_callback_template.html
+
+keystone_fernet_folder: "/etc/keystone/fernet-keys"
+keystone_fernet_max_keys: 3
+
+keystone_inherit_enabled: false
+
+keystone_memcache_servers: localhost:11211
+
+keystone_policy_file: "{{ keystone_dir }}/etc/policy.json"
+
+keystone_paste_file: "{{ keystone_dir }}/etc/keystone-paste.ini"
+
+keystone_as_idp: False
+keystone_saml_certfile: /etc/keystone/ssl/certs/signing_cert.pem
+keystone_saml_keyfile: /etc/keystone/ssl/private/signing_key.pem
+keystone_saml_assertion_expiration: 3600
+keystone_saml_idp_entity_id: http://{{ ansible_hostname }}:5000/v3/OS-FEDERATION/saml2/idp
+keystone_saml_idp_sso_endpoint: http://{{ ansible_hostname }}:5000/v3/OS-FEDERATION/saml2/sso
+keystone_saml_idp_lang: en
+keystone_saml_idp_org_name: Tester
+keystone_saml_idp_org_display_name: Tester
+keystone_saml_idp_org_url:
+keystone_saml_idp_contact_company:
+keystone_saml_idp_contact_first_name:
+keystone_saml_idp_contact_surname:
+keystone_saml_idp_contact_email:
+keystone_saml_idp_contact_phone:
+keystone_saml_idp_contact_type: other
+keystone_saml_idp_metadata_path: /etc/keystone/saml2_idp_metadata.xml
+keystone_saml_idp_relay_state_prefix: "ss:mem:"
+
+keystone_signing_certfile: /etc/keystone/ssl/certs/signing_cert.pem
+keystone_signing_keyfile: /etc/keystone/ssl/private/signing_key.pem
+keystone_signing_ca_certs: /etc/keystone/ssl/certs/ca.pem
+keystone_signing_ca_key: /etc/keystone/ssl/private/cakey.pem
+keystone_signing_key_size: 2048
+keystone_signing_valid_days: 3650
+keystone_signing_cert_subject: /C=US/CN={{ ansible_hostname }}
+
+keystone_token_provider: fernet
+keystone_token_expiration: 3600
+keystone_token_allow_rescope_scoped_token: true
+keystone_token_hash_algorithm: md5
+
+keystone_tokenless_auth_trusted_issuer:
+keystone_tokenless_auth_protocol: x509
+keystone_tokenless_issuer_attribute: SSL_CLIENT_I_DN
+
+keystone_trust_enabled: true
+keystone_trust_allow_redelegation: false
+keystone_trust_max_redelegation_count: 3

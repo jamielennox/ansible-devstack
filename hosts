@@ -1,0 +1,5 @@
+[keystone-idp]
+129.41.140.58   ansible_connection=ssh  ansible_ssh_user=ibmcloud
+
+[keystone-sp]
+129.41.140.42   ansible_connection=ssh  ansible_ssh_user=ibmcloud

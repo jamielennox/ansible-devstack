@@ -1,0 +1,36 @@
+---
+- name: create projects
+  command: "{{ osc }} project create --or-show --domain default {{ item }}"
+  environment: admin_auth_env
+  with_items: "{{ keystone_projects }}"
+
+- name: create users
+  command: "{{ osc }} user create --or-show --password {{ item.value }} --domain default {{ item.key }}"
+  environment: admin_auth_env
+  with_dict: "{{ keystone_users }}"
+
+- name: create roles
+  command: "{{ osc }} role create --or-show {{ item }}"
+  environment: admin_auth_env
+  with_items: "{{ keystone_roles }}"
+
+- name: user assignments
+  command: "{{ osc }} role add --user {{ item.user }} --project {{ item.project }} {{ item.role }}"
+  environment: admin_auth_env
+  with_items: "{{ keystone_assignments }}"
+
+- name: create services
+  shell: >
+    {{ osc }} service show {{ item.type }} ||
+    {{ osc }} service create --name {{ item.name }} {{ item.type }}
+  environment: admin_auth_env
+  with_items: "{{ keystone_services }}"
+
+- name: create endpoints
+  shell: >
+    {{ osc }} endpoint list --service {{ item.0.type }} --interface {{ item.1.interface }} ||
+    {{ osc }} endpoint create {{ item.0.type }} {{ item.1.interface }} {{ item.1.url }}
+  environment: admin_auth_env
+  with_subelements:
+    - "{{ keystone_services }}"
+    - endpoints

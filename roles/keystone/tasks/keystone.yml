@@ -1,0 +1,41 @@
+---
+- name: clone keystone
+  git: repo=https://github.com/openstack/keystone.git
+       dest={{ keystone_dir }}
+       update=yes
+       version={{ keystone_branch }}
+  notify: restart apache
+
+- name: install keystone
+  pip: name="file://{{ keystone_dir }}"
+       extra_args="-e"
+       state=present
+
+- name: logging directory
+  file: state=directory
+        owner={{ keystone_user }}
+        path={{ keystone_log_dir }}
+
+# do log file because otherwise fernet rotation makes log file with root
+- name: log file
+  file: state=file
+        owner={{ keystone_user }}
+        path={{ keystone_log_dir }}/keystone.log
+  notify: restart apache
+
+- name: keystone conf directory
+  file: state=directory
+        owner={{ keystone_user }}
+        path=/etc/keystone
+
+- name: copy keystone.conf
+  template: dest=/etc/keystone/keystone.conf
+            src=keystone.conf.j2
+            owner={{ keystone_user }}
+  notify: restart apache
+
+- name: migrate database
+  command: keystone-manage db_sync
+
+- include: fernet.yml
+  when: keystone_token_provider == 'fernet'

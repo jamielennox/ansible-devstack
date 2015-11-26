@@ -1,0 +1,13 @@
+---
+- name: Install keystone IDP
+  hosts: keystone-idp
+  sudo: yes
+  roles:
+    # - role: common
+    - role: keystone
+    # - role: keystone-users
+  vars:
+    keystone_as_idp: True
+    keystone_saml_idp_contact_first_name: Jamie
+    keystone_saml_idp_contact_surname: Lennox
+    keystone_saml_idp_contact_email: jamielennox@gmail.com

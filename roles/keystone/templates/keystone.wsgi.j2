@@ -1,0 +1,12 @@
+#!/bin/env python
+
+import threading
+
+import mod_wsgi
+
+from keystone.server import wsgi
+
+process_group = mod_wsgi.process_group.lstrip('keystone-')
+
+with threading.Lock():
+    application = wsgi.initialize_application(process_group)

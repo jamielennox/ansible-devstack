@@ -1,0 +1,20 @@
+---
+- name: start mariadb
+  service: name=mysql
+           state=started
+           enabled=yes
+
+- name: create database
+  mysql_db: name={{ keystone_db_name }}
+            state=present
+
+- name: create database user
+  mysql_user: name={{ keystone_db_user }}
+              password={{ keystone_db_pass }}
+              state=present
+              priv=keystone.*:ALL
+
+- name: start memcached
+  service: name=memcached
+           state=started
+           enabled=yes

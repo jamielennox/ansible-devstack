@@ -1,0 +1,25 @@
+---
+- name: install idp package deps
+  apt: name=xmlsec1
+       state=present
+
+- name: install idp pip deps
+  pip: name=pysaml2
+       state=present
+
+# NOTE: this is fragile. This generates keys for PKI tokens but the default
+# location is the same and the certs work for SAML so until we need something
+# more complex generate them this way.
+- name: generate ssl certs
+  command: >
+    keystone-manage pki_setup --keystone-user {{ keystone_user }}
+                              --keystone-group {{ keystone_user }}
+  args:
+    creates: "{{ keystone_signing_keyfile }}"
+  when: keystone_saml_keyfile == keystone_signing_keyfile
+
+- name: generate metadata file
+  shell: keystone-manage saml_idp_metadata > {{ keystone_saml_idp_metadata_path }}
+  args:
+    creates: "{{ keystone_saml_idp_metadata_path }}"
+  notify: restart apache

@@ -1,0 +1,21 @@
+---
+- name: ensure mapping folder
+  file:
+    state: directory
+    dest: "{{ keystone_mapping_folder }}"
+    recurse: yes
+
+# This should be doable with copy but: https://github.com/ansible/ansible/issues/9852
+- name: create mapping files
+  template:
+    dest: "{{ keystone_mapping_folder }}/{{ item.key }}.json"
+    src: mapping.json.j2
+  with_dict: "{{ keystone_mappings | default({}) }}"
+
+- name: create mapping record
+  environment: os_admin_auth
+  shell: >
+    {{ osc }} mapping show {{ item.key }} &&
+    {{ osc }} mapping set --rules {{ keystone_mapping_folder }}/{{ item.key }}.json {{ item.key }} ||
+    {{ osc }} mapping create --rules {{ keystone_mapping_folder }}/{{ item.key }}.json {{ item.key }}
+  with_dict: "{{ keystone_mappings | default({}) }}"

@@ -1,0 +1,51 @@
+Listen 5000
+Listen 35357
+
+<VirtualHost *:5000>
+    WSGIDaemonProcess keystone-main processes=5 threads=1 user={{ keystone_user }} group={{ keystone_user }} display-name=%{GROUP}
+    WSGIProcessGroup keystone-main
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+    LimitRequestBody 114688
+    ErrorLogFormat "%{cu}t %M"
+    ErrorLog /var/log/apache2/keystone.log
+    CustomLog /var/log/apache2/keystone_access.log combined
+
+{% if keystone_shib_idps is defined %}
+    <Location /Shibboleth.sso>
+        SetHandler shib
+    </Location>
+
+{% for idp in keystone_shib_idps %}
+    <Location /v3/OS-FEDERATION/identity_providers/{{ idp.name }}/protocols/saml2/auth>
+        ShibRequestSetting requireSession 1
+        AuthType shibboleth
+        ShibExportAssertion Off
+        Require valid-user
+    </Location>
+{% endfor %}
+{% endif %}
+
+    <Directory {{ keystone_wsgi_dir }}>
+        Require all granted
+    </Directory>
+
+    WSGIScriptAlias / {{ keystone_wsgi_dir }}/keystone.wsgi
+</VirtualHost>
+
+<VirtualHost *:35357>
+    WSGIDaemonProcess keystone-admin processes=5 threads=1 user={{ keystone_user }} group={{ keystone_user }} display-name=%{GROUP}
+    WSGIProcessGroup keystone-admin
+    WSGIApplicationGroup %{GLOBAL}
+    WSGIPassAuthorization On
+    LimitRequestBody 114688
+    ErrorLogFormat "%{cu}t %M"
+    ErrorLog /var/log/apache2/keystone.log
+    CustomLog /var/log/apache2/keystone_access.log combined
+
+    <Directory {{ keystone_wsgi_dir }}>
+        Require all granted
+    </Directory>
+
+    WSGIScriptAlias / {{ keystone_wsgi_dir }}/keystone.wsgi
+</VirtualHost>

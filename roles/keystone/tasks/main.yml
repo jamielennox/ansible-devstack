@@ -1,0 +1,48 @@
+---
+- name: set distribution variables
+  include_vars: "{{ item }}"
+  with_items:
+    - "{{ ansible_distribution | lower }}.yml"
+
+#- name: install packages
+#  apt: name=apache2,mariadb-server,memcached,python-pip,python-virtualenv,python-dev,gcc,libffi-dev,libmariadbclient-dev,libapache2-mod-wsgi,libssl-dev
+#       state=present
+#  when: ansible_distribution == 'Ubuntu'
+#
+#- name: upgrade pip
+#  pip: name=pip
+#       state=latest
+#
+#- name: additional python libraries
+#  pip: name={{ item }}
+#       state=present
+#  with_items:
+#    - python-memcached
+#    - MySQL-python
+#
+#- name: keystone user
+#  user: name={{ keystone_user }}
+#        createhome=yes
+#        home={{ keystone_home }}
+#        system=yes
+#        shell={{ keystone_shell }}
+#
+#- name: Install OSC
+#  pip: name=python-openstackclient
+#       state=present
+#
+#- include: db.yml
+#- include: keystone.yml
+#- include: apache.yml
+#
+#- include: idp.yml
+#  when: keystone_as_idp
+#
+## restart apache if required
+#- meta: flush_handlers
+
+- include: mapping.yml
+  when: keystone_mappings is defined
+
+- include: shib-sp.yml
+  when: keystone_shib_idps is defined

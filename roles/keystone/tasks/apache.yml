@@ -1,0 +1,33 @@
+---
+- name: enable apache modules
+  apache2_module: name={{ item }}
+                  state=present
+  with_items:
+    - wsgi
+  notify: restart apache
+  when: ansible_os_family == 'Debian'
+
+- name: create keystone service directory
+  file: state=directory
+        path={{ keystone_wsgi_dir }}
+
+- name: copy keystone service loader
+  template: src=keystone.wsgi.j2
+            dest={{ keystone_wsgi_dir }}/keystone.wsgi
+
+- name: copy keystone wsgi conf
+  template: src={{ ansible_distribution | lower }}-wsgi-keystone.conf.j2
+            dest={{ apache_sites_directory }}/wsgi-keystone.conf
+  notify: restart apache
+
+- name: enable keystone site
+  file: state=link
+        src={{ apache_sites_directory }}/wsgi-keystone.conf
+        path=/etc/apache2/sites-enabled/wsgi-keystone.conf
+  notify: restart apache
+  when: ansible_os_family == 'Debian'
+
+- name: start apache
+  service: name={{ apache_service }}
+           state=started
+           enabled=yes

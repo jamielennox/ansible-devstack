@@ -1,0 +1,5 @@
+---
+os_admin_auth:
+  OS_URL: "http://localhost:5000/v3"
+  OS_TOKEN: "{{ keystone_admin_token }}"
+  OS_IDENTITY_API_VERSION: 3

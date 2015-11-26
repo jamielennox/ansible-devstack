@@ -1,0 +1,4 @@
+---
+apache_service: apache2
+apache_directory: /etc/apache2
+apache_sites_directory: "{{ apache_directory }}/sites-available"
