@@ -11,6 +11,10 @@ Listen 35357
     ErrorLog /var/log/apache2/keystone.log
     CustomLog /var/log/apache2/keystone_access.log combined
 
+    <Directory {{ keystone_wsgi_dir }}>
+        Require all granted
+    </Directory>
+
 {% if keystone_shib_idps is defined %}
     <Location /Shibboleth.sso>
         SetHandler shib
@@ -23,13 +27,12 @@ Listen 35357
         ShibExportAssertion Off
         Require valid-user
     </Location>
+
+{% endfor %}
+{% for idp in keystone_shib_idps %}
+    # WSGIScriptAlias /v3/OS-FEDERATION/identity_providers/{{ idp.name }}/protocols/saml2/auth {{ keystone_wsgi_dir }}/dump-environ.wsgi
 {% endfor %}
 {% endif %}
-
-    <Directory {{ keystone_wsgi_dir }}>
-        Require all granted
-    </Directory>
-
     WSGIScriptAlias / {{ keystone_wsgi_dir }}/keystone.wsgi
 </VirtualHost>
 

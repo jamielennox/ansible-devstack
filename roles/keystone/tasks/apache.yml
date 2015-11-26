@@ -15,6 +15,10 @@
   template: src=keystone.wsgi.j2
             dest={{ keystone_wsgi_dir }}/keystone.wsgi
 
+- name: copy environ debug loader
+  copy: src=dump-environ.wsgi
+        dest={{ keystone_wsgi_dir }}/dump-environ.wsgi
+
 - name: copy keystone wsgi conf
   template: src={{ ansible_distribution | lower }}-wsgi-keystone.conf.j2
             dest={{ apache_sites_directory }}/wsgi-keystone.conf
