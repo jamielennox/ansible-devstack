@@ -3,11 +3,21 @@
   hosts: keystone-idp
   sudo: yes
   roles:
-    # - role: common
+    #- role: common
     - role: keystone
     # - role: keystone-users
+  pre_tasks:
+    - include_vars: keystone-defaults.yml
   vars:
     keystone_as_idp: True
+
     keystone_saml_idp_contact_first_name: Jamie
     keystone_saml_idp_contact_surname: Lennox
     keystone_saml_idp_contact_email: jamielennox@gmail.com
+
+    keystone_public_url: 129.41.140.58
+
+    keystone_service_providers:
+      - name: keystoneidp
+        sp_url: http://129.41.140.42:5000/Shibboleth.sso/SAML2/ECP
+        auth_url: http://129.41.140.42:5000/v3/OS-FEDERATION/identity_providers/keystoneidp/protocols/saml2/auth

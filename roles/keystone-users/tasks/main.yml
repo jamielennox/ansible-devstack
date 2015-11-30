@@ -1,36 +1,54 @@
 ---
 - name: create projects
-  command: "{{ osc }} project create --or-show --domain default {{ item }}"
-  environment: admin_auth_env
+  command: "{{ osc }} --os-identity-api-version 3 project create --or-show --domain default {{ item }}"
+  environment: keystone_admin_auth
   with_items: "{{ keystone_projects }}"
+  when: keystone_admin_auth is defined and keystone_projects is defined
 
 - name: create users
-  command: "{{ osc }} user create --or-show --password {{ item.value }} --domain default {{ item.key }}"
-  environment: admin_auth_env
+  command: "{{ osc }} --os-identity-api-version 3 user create --or-show --password {{ item.value }} --domain default {{ item.key }}"
+  environment: keystone_admin_auth
   with_dict: "{{ keystone_users }}"
+  when: keystone_admin_auth is defined and keystone_users is defined
 
 - name: create roles
-  command: "{{ osc }} role create --or-show {{ item }}"
-  environment: admin_auth_env
+  command: "{{ osc }} --os-identity-api-version 3 role create --or-show {{ item }}"
+  environment: keystone_admin_auth
   with_items: "{{ keystone_roles }}"
+  when: keystone_admin_auth is defined and keystone_roles is defined
+
+- name: create groups
+  command: "{{ osc }} --os-identity-api-version 3 group create --domain default --or-show {{ item }}"
+  environment: keystone_admin_auth
+  with_items: "{{ keystone_groups }}"
+  when: keystone_admin_auth is defined and keystone_groups is defined
 
 - name: user assignments
-  command: "{{ osc }} role add --user {{ item.user }} --project {{ item.project }} {{ item.role }}"
-  environment: admin_auth_env
+  command: "{{ osc }} --os-identity-api-version 3 role add --user {{ item.user }} --project {{ item.project }} {{ item.role }}"
+  environment: keystone_admin_auth
+  with_items: "{{ keystone_assignments | default([]) }}"
+  when: keystone_admin_auth is defined and item.user is defined
+
+- name: group assignments
+  command: "{{ osc }} --os-identity-api-version 3 role add --group {{ item.group }} --project {{ item.project }} {{ item.role }}"
+  environment: keystone_admin_auth
   with_items: "{{ keystone_assignments }}"
+  when: keystone_admin_auth is defined and item.group is defined
 
 - name: create services
   shell: >
-    {{ osc }} service show {{ item.type }} ||
-    {{ osc }} service create --name {{ item.name }} {{ item.type }}
-  environment: admin_auth_env
+    {{ osc }} --os-identity-api-version 3 service show {{ item.type }} ||
+    {{ osc }} --os-identity-api-version 3 service create --name {{ item.name }} {{ item.type }}
+  environment: keystone_admin_auth
   with_items: "{{ keystone_services }}"
+  when: keystone_admin_auth is defined and keystone_services is defined
 
 - name: create endpoints
   shell: >
-    {{ osc }} endpoint list --service {{ item.0.type }} --interface {{ item.1.interface }} ||
-    {{ osc }} endpoint create {{ item.0.type }} {{ item.1.interface }} {{ item.1.url }}
-  environment: admin_auth_env
+    {{ osc }} --os-identity-api-version 3 endpoint list --service {{ item.0.type }} --interface {{ item.1.interface }} -c URL -f value | grep -q {{ item.1.url }} ||
+    {{ osc }} --os-identity-api-version 3 endpoint create {{ item.0.type }} {{ item.1.interface }} {{ item.1.url }}
+  environment: keystone_admin_auth
   with_subelements:
     - "{{ keystone_services }}"
     - endpoints
+  when: keystone_admin_auth is defined and keystone_services is defined

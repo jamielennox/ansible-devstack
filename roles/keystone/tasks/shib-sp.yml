@@ -1,35 +1,39 @@
 ---
-- name: install shibboleth modules
-  apt: name=libapache2-mod-shib2
-       state=present
+#- name: install shibboleth modules
+#  apt: name=libapache2-mod-shib2
+#       state=present
+#
+#- name: enable apache modules
+#  apache2_module: name=shib2
+#                  state=present
+#  notify: restart apache
+#
+#- name: Generate shib keys
+#  command: shib-keygen -o /etc/shibboleth -h {{ ansible_default_ipv4.address }} -y 3
+#  args:
+#    creates: /etc/shibboleth/sp-key.pem
+#  notify: restart apache
 
-- name: enable apache modules
-  apache2_module: name=shib2
-                  state=present
-  notify: restart apache
-
-- name: Generate shib keys
-  command: shib-keygen -o /etc/shibboleth -h {{ ansible_default_ipv4.address }} -y 3
-  args:
-    creates: /etc/shibboleth/sp-key.pem
-  notify: restart apache
+- name: copy shibboleth attribute map
+  template: src=shibboleth-attribute-map.xml.j2
+            dest=/etc/shibboleth/attribute-map.xml
 
 - name: copy shibboleth conf files
   template: src=shibboleth2.xml.j2
             dest=/etc/shibboleth/shibboleth2.xml
             validate="shibd -t -c %s"
 
-# this one's funny because of https://bugs.launchpad.net/keystone/+bug/1479837
-- name: create identity provider
-  environment: os_admin_auth
-  shell: >
-    {{ osc }} identity provider list -c ID -f value | grep -q {{ item.name }} ||
-    {{ osc }} identity provider create {{ item.name }}
-  with_items: "{{ keystone_shib_idps | default([]) }}"
-
-- name: create protocol
-  environment: os_admin_auth
-  shell: >
-    {{ osc }} federation protocol show --identity-provider {{ item.name }} saml2 ||
-    {{ osc }} federation protocol create --identity-provider {{ item.name }} --mapping {{ item.mapping }} saml2
-  with_items: "{{ keystone_shib_idps | default([]) }}"
+## this one's funny because of https://bugs.launchpad.net/keystone/+bug/1479837
+#- name: create identity provider
+#  environment: os_admin_auth
+#  shell: >
+#    {{ osc }} identity provider list -c ID -f value | grep -q {{ item.name }} ||
+#    {{ osc }} identity provider create {{ item.name }}
+#  with_items: "{{ keystone_shib_idps | default([]) }}"
+#
+#- name: create protocol
+#  environment: os_admin_auth
+#  shell: >
+#    {{ osc }} federation protocol show --identity-provider {{ item.name }} saml2 ||
+#    {{ osc }} federation protocol create --identity-provider {{ item.name }} --mapping {{ item.mapping }} saml2
+#  with_items: "{{ keystone_shib_idps | default([]) }}"

@@ -14,9 +14,11 @@
                   handlerSSL="false"
                   cookieProps="http">
 
-            <SSO entityID="https://idp.testshib.org/idp/shibboleth" ECP="true">
+        {% for item in keystone_shib_idps %}
+            <SSO entityID="{{ item.entity_id }}" ECP="true">
                 SAML2 SAML1
             </SSO>
+        {% endfor %}
 
             <!-- SAML and local-only logout. -->
             <Logout>SAML2 Local</Logout>
@@ -45,11 +47,14 @@
                 styleSheet="/shibboleth-sp/main.css"/>
 
 {% for item in keystone_shib_idps %}
-    {% set default_backing='metadata-{{ item.name }}.xml' %}
-        <MetadataProvider type="XML"
-                          uri="{{ item.metadata_uri }}"
-                          backingFilePath="{{ item.metadata_file | default(default_backing) }}"
-                          reloadInterval="{{ item.metadata_reload | default('1800')}}" />
+    <MetadataProvider type="XML"
+                      uri="{{ item.metadata_uri }}"
+        {% if 'metadata_file' in item %}
+                      backingFilePath="{{ item.metadata_file }}"
+        {% else %}
+                      backingFilePath="metadata-{{ item.name }}.xml"
+        {% endif %}
+                      reloadInterval="{{ item.metadata_reload | default('1800')}}" />
 {% endfor %}
 
         <!-- Map to extract attributes from SAML assertions. -->

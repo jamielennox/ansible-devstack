@@ -57,12 +57,12 @@ keystone_saml_idp_sso_endpoint: http://{{ ansible_hostname }}:5000/v3/OS-FEDERAT
 keystone_saml_idp_lang: en
 keystone_saml_idp_org_name: Tester
 keystone_saml_idp_org_display_name: Tester
-keystone_saml_idp_org_url:
-keystone_saml_idp_contact_company:
-keystone_saml_idp_contact_first_name:
-keystone_saml_idp_contact_surname:
-keystone_saml_idp_contact_email:
-keystone_saml_idp_contact_phone:
+keystone_saml_idp_org_url: ""
+keystone_saml_idp_contact_company: ""
+keystone_saml_idp_contact_first_name: ""
+keystone_saml_idp_contact_surname: ""
+keystone_saml_idp_contact_email: ""
+keystone_saml_idp_contact_phone: ""
 keystone_saml_idp_contact_type: other
 keystone_saml_idp_metadata_path: /etc/keystone/saml2_idp_metadata.xml
 keystone_saml_idp_relay_state_prefix: "ss:mem:"
@@ -80,7 +80,7 @@ keystone_token_expiration: 3600
 keystone_token_allow_rescope_scoped_token: true
 keystone_token_hash_algorithm: md5
 
-keystone_tokenless_auth_trusted_issuer:
+keystone_tokenless_auth_trusted_issuer: ""
 keystone_tokenless_auth_protocol: x509
 keystone_tokenless_issuer_attribute: SSL_CLIENT_I_DN
 

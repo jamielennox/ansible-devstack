@@ -46,3 +46,6 @@
 
 - include: shib-sp.yml
   when: keystone_shib_idps is defined
+
+- include: idp-sp.yml
+  when: keystone_service_providers is defined

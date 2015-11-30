@@ -3,13 +3,14 @@
   hosts: keystone-sp
   sudo: yes
   pre_tasks:
+    - include_vars: keystone-defaults.yml
     - name: add host entry for idp
       lineinfile:
         dest: /etc/hosts
         line: 129.41.140.58 keystone-idp
   roles:
-      # - role: common
-    - role: keystone
+    # - role: common
+    # - role: keystone
     - role: keystone-users
   vars:
     keystone_mappings:
@@ -23,10 +24,33 @@
               name: "{0}"
           remote:
           - type: "eppn"
+      keystoneidp:
+        - local:
+          - group:
+              name: "keystoneidp"
+              domain:
+                id: "default"
+            user:
+              name: "Remote {0}"
+              id: "keystone-idp-{0}"
+              domain:
+                id: "default"
+          remote:
+            - type: "openstack_user"
+
     keystone_shib_idps:
-      - name: testshib
-        mapping: testshib
-        metadata_uri: http://www.testshib.org/metadata/testshib-providers.xml
+      # - name: testshib
+      #   mapping: testshib
+      #   metadata_uri: http://www.testshib.org/metadata/testshib-providers.xml
       - name: keystoneidp
-        mapping: testshib
+        mapping: keystoneidp
+        entity_id: http://keystone-idp:5000/v3/OS-FEDERATION/saml2/idp
         metadata_uri: http://keystone-idp:5000/v3/OS-FEDERATION/saml2/metadata
+        attributes:
+          openstack_user: openstack_user
+          openstack_roles: openstack_roles
+          openstack_project: openstack_project
+          openstack_user_domain: openstack_user_domain
+          openstack_project_domain: openstack_project_domain
+
+    keystone_public_url: 129.41.140.42

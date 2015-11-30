@@ -1,0 +1,44 @@
+---
+keystone_admin_auth:
+  OS_URL: http://localhost:5000/v3
+  OS_TOKEN: ADMIN
+
+keystone_users:
+  admin: password
+  demo: password
+
+keystone_projects:
+  - admin
+  - demo
+
+keystone_groups:
+  - keystoneidp
+
+keystone_roles:
+  - admin
+  - Member
+
+keystone_assignments:
+  - user: admin
+    project: admin
+    role: admin
+  - user: demo
+    project: demo
+    role: Member
+  - group: keystoneidp
+    project: demo
+    role: Member
+  - group: keystoneidp
+    project: admin
+    role: admin
+
+keystone_services:
+  - name: keystone
+    type: identity
+    endpoints:
+      - interface: public
+        url: http://{{ keystone_public_url }}:5000/
+      - interface: internal
+        url: http://{{ keystone_public_url }}:5000/
+      - interface: admin
+        url: http://{{ keystone_public_url }}:35357/

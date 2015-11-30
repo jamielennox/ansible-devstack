@@ -1,0 +1,7 @@
+---
+- name: create k2k service providers
+  shell: >
+    {{ osc }} service provider show {{ item.name }} ||
+    {{ osc }} service provider create --auth-url {{ item.auth_url }} --service-provider-url {{ item.sp_url }} {{ item.name }}
+  environment: os_admin_auth
+  with_items: "{{ keystone_service_providers | default([]) }}"
