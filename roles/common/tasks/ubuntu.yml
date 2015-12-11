@@ -7,3 +7,9 @@
   sudo: yes
   apt: name={{ item }}
   with_items: "{{ common_packages }}"
+
+- name: ack symlink
+  sudo: yes
+  file: state=link
+        src=/usr/bin/ack-grep
+        dest=/usr/bin/ack
