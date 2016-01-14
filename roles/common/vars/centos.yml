@@ -9,4 +9,3 @@ common_packages:
   - git-review
   - redhat-rpm-config
   - rng-tools
-  - epel-release

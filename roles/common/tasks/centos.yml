@@ -3,6 +3,10 @@
   sudo: yes
   yum: name=* state=latest
 
+- name: Install epel
+  sudo: yes
+  yum: name=epel-release state=present
+
 - name: Install common packages
   sudo: yes
   yum: name={{ item }}
