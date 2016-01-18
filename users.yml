@@ -1,0 +1,38 @@
+# This one is used for setting up users that only give you root login
+---
+- hosts: all
+  tasks:
+    # - name: sudoers.d
+    #   file:
+    #     state: directory
+    #     path: /etc/sudoers.d
+    #     owner: root
+    #     group: root
+
+    - name: Add sudo group
+      group:
+        state: present
+        name: sudo
+
+    - name: enable sudo group sudo privs
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        validate: 'visudo -cf %s'
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD:ALL'
+        insertafter: EOF
+
+    - name: Create user
+      user:
+        name: jamielennox
+        state: present
+        shell: /bin/bash
+        groups: sudo
+        createhome: yes
+
+    - name: SSH key
+      authorized_key:
+        user: jamielennox
+        key: https://github.com/jamielennox.keys
+
