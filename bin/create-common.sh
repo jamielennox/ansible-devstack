@@ -37,5 +37,5 @@ if [ $hostname ]; then
     extra_vars="--extra-vars \"hostname=$hostname\""
 fi
 
-echo ansible-playbook -i \"$1,\" $extra_vars common.yml
-ansible-playbook -i "$1," $extra_vars common.yml
+echo ansible-playbook -i \"$1,\" $extra_vars "$(dirname $0)/../playbooks/common.yml"
+ansible-playbook -i "$1," $extra_vars "$(dirname $0)/../playbooks/common.yml"

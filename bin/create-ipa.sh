@@ -11,5 +11,5 @@ if [ -z $1 -o -z $2 ]; then
     usage
 fi
 
-echo ansible-playbook -i \"$2,\" --extra-vars \"domain=$1\" ipa-server.yml
-ansible-playbook -i "$2," --extra-vars "domain=$1" ipa-server.yml
+echo ansible-playbook -i \"$2,\" --extra-vars \"domain=$1\"  \"$(dirname $0)/../playbooks/ipa-server.yml\"
+ansible-playbook -i "$2," --extra-vars "domain=$1" "$(dirname $0)/../playbooks/ipa-server.yml"

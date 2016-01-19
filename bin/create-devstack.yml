@@ -24,18 +24,11 @@ if [ -z $1 ]; then
     usage
 fi
 
-target=${2:-devstack}.yml
-
-if [ ! -e $target ]; then
-    echo "target file $target does not exist. You may only select from the targets in the root directory."
-    exit
-fi
-
 # ip=$(echo $1 | cut -d '@' -f 2)
 # sed -i -e "s/^$ip.*$//" ~/.ssh/known_hosts
 
-# echo "ansible-playbook -i \"$1,\" devstack.yml"
-ansible-playbook -i "$1," $target
+# echo "ansible-playbook -i \"$1,\"  \"$(dirname $0)/../playbooks/devstack.yml\""
+ansible-playbook -i "$1," "$(dirname $0)/../playbooks/devstack.yml"
 
 if [ $devstack ]; then
     ssh $1 "~/devstack/unstack.sh; ~/devstack/stack.sh"
