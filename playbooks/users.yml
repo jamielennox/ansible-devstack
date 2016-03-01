@@ -25,7 +25,7 @@
 
     - name: Create user
       user:
-        name: jamielennox
+        name: jamie
         state: present
         shell: /bin/bash
         groups: sudo
@@ -33,6 +33,6 @@
 
     - name: SSH key
       authorized_key:
-        user: jamielennox
+        user: jamie
         key: https://github.com/jamielennox.keys
 
