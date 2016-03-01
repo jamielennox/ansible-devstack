@@ -1,6 +1,8 @@
 # This one is used for setting up users that only give you root login
 ---
 - hosts: all
+  vars:
+    ansible_ssh_user: root
   tasks:
     # - name: sudoers.d
     #   file:
