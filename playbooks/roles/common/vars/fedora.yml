@@ -8,4 +8,4 @@ common_packages:
   - mosh
   - git-review
   - redhat-rpm-config
-  - rng-tools
+  - haveged

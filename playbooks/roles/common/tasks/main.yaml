@@ -22,7 +22,10 @@
   selinux: state=disabled
   when: ansible_os_family == 'RedHat'
 
-- include: rngd.yml
+- name: Start the haveged service
+  sudo: yes
+  service: name=haveged enabled=yes state=started
+
 - include: dotfiles.yml
 
 - name: tty-less sudo
