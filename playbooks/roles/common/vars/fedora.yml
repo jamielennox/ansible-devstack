@@ -9,3 +9,5 @@ common_packages:
   - git-review
   - redhat-rpm-config
   - haveged
+  - screen
+  - htop

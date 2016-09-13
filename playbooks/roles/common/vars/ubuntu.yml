@@ -8,3 +8,6 @@ common_packages:
   - mosh
   - git-review
   - haveged
+  - virtualenv
+  - screen
+  - htop
