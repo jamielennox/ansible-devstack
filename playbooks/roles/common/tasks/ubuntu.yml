@@ -32,6 +32,7 @@
   file: state=link
         src=/usr/bin/ack-grep
         dest=/usr/bin/ack
+  when: ansible_distribution_version == "14.04"
 
 - name: Check if a reboot is required
   register: reboot_required
