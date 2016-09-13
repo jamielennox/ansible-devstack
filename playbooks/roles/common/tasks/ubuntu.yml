@@ -1,4 +1,19 @@
 ---
+# this is because some softlayer images ship with a bad apt install. If you
+# apt-get update on the vm these problems get fixed but when using ansible
+# it fails to get the apt lock.
+- name: ensure apt folders
+  sudo: yes
+  file:
+    state: directory
+    name: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+    recurse: no
+  with_items:
+    - /var/lib/apt/lists
+
 - name: update apt packages
   sudo: yes
   apt: update_cache=yes cache_valid_time=300
