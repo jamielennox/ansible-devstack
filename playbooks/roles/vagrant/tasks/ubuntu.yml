@@ -1,0 +1,16 @@
+- name: Install ubuntu packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - ruby-dev
+
+- name: install vagrant
+  become: yes
+  apt:
+    deb: "{{ item }}"
+    state: present
+  with_items:
+    - https://releases.hashicorp.com/vagrant/{{ vagrant_version }}/vagrant_{{ vagrant_version }}_x86_64.deb
+

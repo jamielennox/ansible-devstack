@@ -1,0 +1,2 @@
+vagrant_provider: virtualbox
+vagrant_version: 1.8.5

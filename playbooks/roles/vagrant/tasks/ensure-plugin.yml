@@ -1,0 +1,8 @@
+- name: check for {{ vagrant_plugin }} plugin
+  command: vagrant plugin list
+  changed_when: false
+  register: vagrant_plugin_list
+
+- name: install {{ vagrant_plugin }}
+  command: vagrant plugin install {{ vagrant_plugin }}
+  when: vagrant_plugin_list.stdout.find("{{ vagrant_plugin }}") == -1

@@ -1,0 +1,22 @@
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libvirt-bin
+    - libvirt-dev
+    - libxslt-dev
+    - libxml2-dev
+    - qemu-kvm
+    - zlib1g-dev
+
+- name: start services
+  become: yes
+  service:
+    name: libvirt-bin
+    state: started
+    enabled: yes
+
+- include: ensure-plugin.yml
+  vagrant_plugin: vagrant-libvirt
