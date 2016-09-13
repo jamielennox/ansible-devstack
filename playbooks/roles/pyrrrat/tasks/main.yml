@@ -1,0 +1,23 @@
+---
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - build-essential
+    - git
+    - libffi-dev
+    - libssl-dev
+    - python-dev
+
+- name: clone portbleu repos
+  git:
+    repo: https://review.portbleu.com/{{ item }}
+    dest: "{{ pyrrrat_git_base }}/{{ item }}"
+    update: no
+    recursive: yes
+  with_items:
+    - arrrsula
+    - openstack
+    - pyrrrat-ci
