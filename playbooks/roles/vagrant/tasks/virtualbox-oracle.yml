@@ -1,0 +1,19 @@
+- name: Install oracle key
+  become: yes
+  apt_key:
+    id: A2F683C52980AECF
+    keyserver: keyserver.ubuntu.com
+
+- name: Install oracle repos
+  become: yes
+  apt_repository:
+    filename: virtualbox
+    repo: "deb http://download.virtualbox.org/virtualbox/debian/ {{ ansible_distribution_release }} contrib"
+
+- name: Install virtualbox packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "virtualbox-{{ vagrant_virtualbox_oracle_version }}"

@@ -1,11 +1,4 @@
-- name: Install virtualbox packages
-  become: yes
-  apt:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - virtualbox
-    - virtualbox-dkms
+- include: "virtualbox-{{ vagrant_virtualbox_source }}.yml"
 
 - include: ensure-plugin.yml
   vagrant_plugin: vagrant-vbguest

@@ -1,2 +1,5 @@
 vagrant_provider: virtualbox
 vagrant_version: 1.8.5
+
+vagrant_virtualbox_source: oracle
+vagrant_virtualbox_oracle_version: 5.1
