@@ -39,8 +39,8 @@
   stat: path=/var/run/reboot-required get_md5=no
 
 - name: Restart server
-  command: shutdown -r now "Reboot triggered by Ansible"
-  async: 0
+  shell: sleep 2 && shutdown -r now "Reboot triggered by Ansible"
+  async: 1
   poll: 0
   ignore_errors: true
   when: reboot_required.stat.exists == true
@@ -49,7 +49,10 @@
 - name: Wait for server to reboot
   when: reboot_required.stat.exists == true
   sudo: no
-  local_action: wait_for host={{ inventory_hostname }}
-                         port={{ ansible_ssh_port | default(22) }}
-                         delay=5
-                         timeout=300
+  local_action: wait_for
+  args:
+    host: "{{ inventory_hostname }}"
+    delay: 10
+    port: "{{ ansible_ssh_port | default(22) }}"
+    timeout: 300
+    state: started
