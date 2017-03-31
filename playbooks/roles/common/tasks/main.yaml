@@ -28,6 +28,10 @@
 
 - include: dotfiles.yml
 
+- include: pipsi.yml
+  become: no
+  home: "{{ ansible_env.HOME }}"
+
 - name: tty-less sudo
   sudo: yes
   lineinfile: dest=/etc/sudoers

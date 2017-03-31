@@ -1,0 +1,19 @@
+- name: Create .local folders
+  file:
+    state: directory
+    name: "{{ home }}/.local/{{ item }}"
+  with_items:
+    - bin
+    - venvs
+
+- name: Install pipsi
+  pip:
+    name: pipsi
+    state: present
+    virtualenv: "{{ home }}/.local/venvs/pipsi"
+
+- name: Link pipsi
+  file:
+    src: "{{ home }}/.local/venvs/pipsi/bin/pipsi"
+    dest: "{{ home }}/.local/bin/pipsi"
+    state: link
