@@ -11,3 +11,7 @@ common_packages:
   - virtualenv
   - screen
   - htop
+  - build-essential
+  - libssl-dev
+  - libffi-dev
+  - python-dev
