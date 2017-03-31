@@ -18,12 +18,12 @@
   when: ansible_distribution == 'Ubuntu'
 
 - name: disable selinux
-  sudo: yes
+  become: yes
   selinux: state=disabled
   when: ansible_os_family == 'RedHat'
 
 - name: Start the haveged service
-  sudo: yes
+  become: yes
   service: name=haveged enabled=yes state=started
 
 - include: dotfiles.yml
@@ -33,13 +33,13 @@
   home: "{{ ansible_env.HOME }}"
 
 - name: tty-less sudo
-  sudo: yes
+  become: yes
   lineinfile: dest=/etc/sudoers
               state=absent
               regexp='^Defaults(\s+)requiretty(\s*)$'
               validate='visudo -cf %s'
 
 - name: Set server hostname
-  sudo: yes
+  become: yes
   hostname: name={{hostname}}
   when: hostname is defined

@@ -3,7 +3,7 @@
 # apt-get update on the vm these problems get fixed but when using ansible
 # it fails to get the apt lock.
 - name: ensure apt folders
-  sudo: yes
+  become: yes
   file:
     state: directory
     name: "{{ item }}"
@@ -15,20 +15,20 @@
     - /var/lib/apt/lists
 
 - name: update apt packages
-  sudo: yes
+  become: yes
   apt: update_cache=yes cache_valid_time=300
 
 - name: upgrade all packages with apt
-  sudo: yes
+  become: yes
   apt: upgrade=dist
 
 - name: Install common packages
-  sudo: yes
+  become: yes
   apt: name={{ item }}
   with_items: "{{ common_packages }}"
 
 - name: ack symlink
-  sudo: yes
+  become: yes
   file: state=link
         src=/usr/bin/ack-grep
         dest=/usr/bin/ack
@@ -44,11 +44,11 @@
   poll: 0
   ignore_errors: true
   when: reboot_required.stat.exists == true
-  sudo: yes
+  become: yes
 
 - name: Wait for server to reboot
   when: reboot_required.stat.exists == true
-  sudo: no
+  become: no
   local_action: wait_for
   args:
     host: "{{ inventory_hostname }}"

@@ -1,9 +1,9 @@
 ---
 - name: upgrade all packages with dnf
-  sudo: yes
+  become: yes
   dnf: name=* state=latest
 
 - name: Install common packages with dnf
-  sudo: yes
+  become: yes
   dnf: name={{ item }} state=installed
   with_items: "{{ common_packages }}"

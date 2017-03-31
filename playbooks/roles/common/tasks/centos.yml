@@ -1,13 +1,13 @@
 ---
 - name: upgrade all packages with yum
-  sudo: yes
+  become: yes
   yum: name=* state=latest
 
 - name: Install epel
-  sudo: yes
+  become: yes
   yum: name=epel-release state=present
 
 - name: Install common packages
-  sudo: yes
+  become: yes
   yum: name={{ item }}
   with_items: "{{ common_packages }}"
