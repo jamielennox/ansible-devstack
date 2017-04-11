@@ -9,3 +9,4 @@ common_packages:
   - git-review
   - redhat-rpm-config
   - haveged
+  - python-virtualenv
